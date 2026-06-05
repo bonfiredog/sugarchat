@@ -1,120 +1,132 @@
-# twinetext
-A Twine Sugarcube template for creating text-message-based interactive stories.
+# sugarchat (`twinetext`)
+A Twine Story template (Sugarcube) for creating interactive stories in a text messaging app interface. Can be integrated into a larger Twine work, or used for standalone projects.  
 
+## Screenshots
 
 ## Using This Template
-
-Firstly, the **entire** template must be copied and used as boilerplate. This ensures that the special Passages (`StoryInit`, `PassageHeader` and so on) are included, along with their tags.
-
-You should familiarise yourself with the [Sugarcube](https://www.motoslave.net/sugarcube/2/docs/) format for Twine 2, on which this template is based.
+Import the sample HTML file to your Twine 2 Story List, ensuring that you have the **Sugarcube** story format selected. Don't delete anything unless you know what you are doing, as all the Passages (in particular the special Passages `StoryInit`, `PassageHeader` and so on) are there for a reason.
 
 When creating new Passages based on the templates, make sure that you also replicate their tags, as these are important to the functionality. 
 
-All CSS is included in the onboard Stylesheet, and can be tweaked to your heart's content. This template is designed for phone screens, and may look a bit janky on desktop. 
+You can play the sample as-is, and the Passage code is annotated so you can see how the samples work.
 
-#### 1) Setting Up Using StoryInit
+Knowledge of the [Sugarcube](https://www.motoslave.net/sugarcube/2/docs/) story format for Twine 2 is vital.
 
-The `StoryInit` Passage is used to set up the initial list of chats, and their initial messages (i.e. those messages that are already in the chat when the player loads the game). 
+All CSS is included in the embedded stylesheet, and can be tweaked to your heart's content. This template is designed for phone screens, and may look a bit janky on desktop. 
 
-You can set the name of the chat app itself with the `$appName` variable.
+## Full Tutorial
+### StoryInit
+Set the name of your messaging app (`$appName`) and the (`$playerName`) here.
 
-Define all your messages in the `$messageList` dictionary, using this template for each entry:
+You should also create the initial `$messagelist`: a data structure that includes all the characters and their chat history that are *present at the start of the game*. The samples should be self-explanatory, but each character needs the following:
+
+- A unique `id` (starting at 0);
+- A unique `name`;
+- A URL linking to a profile picture (`chatimage`);
+- The `id` of the `latestmsg` (set this to the `id` of the latest message in the character's `messages` Array);
+- The `id` of the `lastread` message (you can set this to be lower than the `id`, a notification badge will appear in the message list when the player starts the game).
+- A `messages` array, which contains a list of messages with the following variables:
+	- Again, an `id` (starting at 0);
+ 	- A `who` marker (whether it is from the `"char"` or the `"player"`);
+  	- The `text` of the message. 	
+
+### Menu Screen
+Use the template as-is: The  `<<menuScreen>><<menuScreen>>` widget, with only a single parameter pointing to the URL of your fictional app's logo.
+
+### Chat Screen
+
+Again, the template provided shouldn't need editing, just include it as-is.
+
+### Current Chat
+
+When the player selects a chat to read, the `<<chatscreen>>` widget populates the Passage with all the messages (from both the character and the player) included in the `messages` array for that character. 
+
+Other than this, all the functionality and interaction for the current chat is defined in the `Current Chat` passage. Any messages you add using the widgets below are added to the message list database for that character.
+
+The sample contains some examples of how you might structure this: using conditionals to create different flows depending on which character you are currently chatting with, and where in the story you are. 
+
+This template deliberately avoids defining story logic: this is up to you, and can be integrated into this template.
+
+### Widget List
+
+`addMessage(name, who, text)`
+This adds a new message to a chat, even if you aren't currently reading that chat. Use `name` to identify which chat, `who` to define whether it's a message from the `char` or the `player`, and the `text` to set the actual content of the message. You can use the `$chattingwith` variable if you want to add a message to the currently-selected character.
+
+**Example:** `<<addMessage "John" "char" "Are you there?">>`
+
+---
+
+`addMessageContact(name, chatimage, firstmessage, who)`
+This adds a message from a new contact, creating a new chat for them. Works the same as `addMessage`, but remember to set the URL to the `chatimage` for this new character. Also remember that the `name` must be unique.
+
+**Example:** `<<addMessageContact "Sirius Ventures" "http://example.com/img/sirius.png" "Is this Henry? Your offer is waiting!" "char">>`
+
+---
+
+`addMessageInChat(text, typedelay)`
+This is used to add a message in the current open chat (no matter which character). You set the `text` of the message as usual, and you can also set an optional `typedelay` in seconds, which shows an indicator that the character is typing. 
+
+**Example:** `<<addMessageInChat "Are you coming out tonight?" 2s>>`
+
+---
+
+`<<textEntry>><<textEntry>>`
+Include this in CurrentChat to allow the player to freely type a message to the character. No logic hooked up to handle responses.
+
+---
+
+`playerChoices`
+This widget allows the player to choose from a number of predefined options. Selecting one of these will send a particular message to the character.
+Use the `chatchoice` widget to create the options, with a label. Any logic (such as the message to add in the chat, variable changes or any subsequent responses from the character) can be included inside the `chatchoice`.
+
+**Example:**
 
 ```
- 1: { id: 1, name: "Jane", chatimage: "https://example.com/1", latestmsg: 1, lastread: 0,
-        messages: [
-            { id: 1, who: "player", text: "When's the car boot sale?" }
-        ]
-    }
+<<playerChoices>>
+
+<<chatchoice "Lie">>
+<<addMessage $chattingwith "player" "I wasn't there. I was with Hannah.">>
+<<includes "Lie Consequence">>
+<</chatchoice>>
+
+<<chatchoice "Flatter">>
+<<addMessage $chattingwith "player" "Do you really think I would do that to you? I love you.">>
+<<includes "Flatter Consequence">>
+<</chatchoice>>
+
+<<chatchoice "Insult">>
+<<addMessage $chattingwith "player" "You're pathetic.">>
+<<includes "Insult Consequence">>
+<</chatchoice>>
+
+<</playerChoices>>
 ```
 
-As you can see, each message has:
-- A unique `id`;
-- A character `name` (who the player is chatting with);
-- A profile picture for this character, saved as a URL (`chatimage`);
-- An id of the latest message (`latestmsg`) that exists in the chat;
-- The id of the `lastread` message.
 
-There is also an array of existing `messages`, with:
-- Again, a unique `id`;
-- Whether the `character` or `player` sent it (`who`);
-- The `text` of the actual message.
+## License
+This is free and unencumbered software released into the public domain.
 
-#### 2) The Menu Screen Passage
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
 
-This needs the `<<menuScreen>><<menuScreen>>` custom widget, and nothing else. You can see how the widget is constructed in the `Custom Widgets` Passage, but it shouldn't need to be touched. 
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
 
-The message list refreshes every second, so newly added Messages (see below) appear in the list.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
 
-#### 3) The Chat Screen Passage
+For more information, please refer to <https://unlicense.org/>
 
-This should only  contain `<<chatScreen $chattingwith>><</chatScreen>>`: the actual crafting of content happens in the `Current Chat` Passage.
-
-#### 4) The Current Chat Passage
-
-This is where the actual chatting is done - where you use custom widgets to define which messages arrive from characters, and how the player can respond.
-
-There are three ways you can use this Passage:
-
-1) Allow the player to send a free-written text to a character at any time, using the `<<textEntry>>` widget;
-2) Only allow a player to respond to a message by choosing between pre-written responses, using the `widget` widget;
-3) A mixture of the two, in which the `<<textEntry>>` widget is present at all times, apart from when a specific choice is to be made with the `widget` widget.
-
-Note that there is no logic wired up for dealing with free-written texts from the player: that's on you!
-
-You can also use conditionals and other variables to control exactly what appears in this Passage - think of it as where the player interacts with whatever the current correspondent is. 
-
-##### Widgets
-
-`<<addMessage>>`
-
-Parameters:
-- The name of the character in whose chat you want to add a message (make sure you use the full name as it appears in the data structure);
-- Whether it is a message from the `"player"` or the `"character"`;
-- The text of the message itself.
-
-This adds a new message to the list of messages in one particular chat - it can either be from the player, or the character. It can be called anywhere, updating the list of messages globally.
-
-`<<addMessageContact>>`
-
-Parameters:
-- The name of the character (as above);
-- A URL linking to the character's profile image;
-- The message text;
-- Whether it is a message from the `"player"` or the `"character"` that starts the chat.
-
-This works as above, except it allows you to add a new chat, with a new character, with an opening message. 
-
-`<<addMessageInChat>>`
-
-Parameters:
-- The message text:
-- How long it takes the character to type the message (expressed as seconds e.g. `"1s"`).
-
-This is a way to add a Message in the current chat, simulating the character 'typing' for a number of seconds.
-
-
-`
-
-
-
-
-All message sending logic in the game itself is done in Passages whose Titles are then referenced by the script.
-When players send a message, or make a choice as to message from the list, it is added to the messages list, then the latestmsg and last read are updated.
-Characters can also send messages using the sendAsyncMessage widget, which updates the latestmsg without updated the last read.
-
-
-
-- The <<textChoices>> macro has only one parameter: the delay (from the moment the Screen is loaded) before it appears. The choices are written inside, as <<chatChoice>> macros .  There should be space for two choices maximum. 
-
-- The <<chatChoice>> macro has the following parameters:
-	- The Passage that clicking a choice goes to. If you do not want to immediately go to another Passage, just write "".
-    - The variable, and its value, that you want to set by clicking this choice. Again, these two parameters are optional: if you don't want to set a variable, just write both as "".
-    - You can also optionally have a message from the player display after the choice has been clicked. If you want this, write the content of the message in the parameter; otherwise, leave it as "".
-    - The text of the choice button itself.
-    - A unique ID: should either be "choice1" or "choice2".
-
-- If you don't want the choice to go to another Passage, you can optionally add more content inside the <<chatChoice>> macro, which will only display if that choice is clicked. This allows you to carry on a conversation between a player and a character depending on the player's choices. 
-
-----
 
