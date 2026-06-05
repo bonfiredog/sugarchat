@@ -1,4 +1,4 @@
-# sugarchat (`twinetext`)
+# `sugarchat`
 A Twine Story template (Sugarcube) for creating interactive stories in a text messaging app interface. Can be integrated into a larger Twine work, or used for standalone projects.  
 
 ## Screenshots
