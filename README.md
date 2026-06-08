@@ -4,6 +4,15 @@
 A Twine Story template (Sugarcube) for creating interactive stories in a text messaging app interface. Can be integrated into a larger Twine work, or used for standalone projects.  
 
 ## Screenshots
+<div style="display:flex;flex-direction:row;gap:1%;">
+<img src="http://bonfiredog.co.uk/resources/twinetext/ss1.png" style="width:20%;" />
+
+<img src="http://bonfiredog.co.uk/resources/twinetext/ss2.png" style="width:20%;" />
+
+<img src="http://bonfiredog.co.uk/resources/twinetext/ss3.png" style="width:20%;" />
+
+<img src="http://bonfiredog.co.uk/resources/twinetext/ss4.png" style="width:20%;" />
+</div>
 
 ## Using This Template
 Import the sample HTML file to your Twine 2 Story List, ensuring that you have the **Sugarcube** story format selected. Don't delete anything unless you know what you are doing, as all the Passages (in particular the special Passages `StoryInit`, `PassageHeader` and so on) are there for a reason.
@@ -30,7 +39,8 @@ You should also create the initial `$messagelist`: a data structure that include
 - A `messages` array, which contains a list of messages with the following variables:
 	- Again, an `id` (starting at 0);
  	- A `who` marker (whether it is from the `"char"` or the `"player"`);
-  	- The `text` of the message. 	
+  	- The `text` of the message.
+  	- An (optional) `attach` value, which defines any attachments that are part of messages. These need to be written as HTML markup (i.e. in an `<img`>, `<audio>`, `<video>` tag). I've only tested the appearance of images, so you may need to add some CSS to make audio and video look good.
 
 ### Menu Screen
 Use the template as-is: The  `<<menuScreen>><<menuScreen>>` widget, with only a single parameter pointing to the URL of your fictional app's logo.
@@ -51,22 +61,22 @@ This template deliberately avoids defining story logic: this is up to you, and c
 
 ### Widget List
 
-`addMessage(name, who, text)`
-This adds a new message to a chat, even if you aren't currently reading that chat. Use `name` to identify which chat, `who` to define whether it's a message from the `char` or the `player`, and the `text` to set the actual content of the message. You can use the `$chattingwith` variable if you want to add a message to the currently-selected character.
+`addMessage(name, who, text, attach)`
+This adds a new message to a chat, even if you aren't currently reading that chat. Use `name` to identify which chat, `who` to define whether it's a message from the `char` or the `player`, and the `text` to set the actual content of the message. You can use the `$chattingwith` variable if you want to add a message to the currently-selected character. The `attach` is optional (see above).
 
 **Example:** `<<addMessage "John" "char" "Are you there?">>`
 
 ---
 
-`addMessageContact(name, chatimage, firstmessage, who)`
-This adds a message from a new contact, creating a new chat for them. Works the same as `addMessage`, but remember to set the URL to the `chatimage` for this new character. Also remember that the `name` must be unique.
+`addMessageContact(name, chatimage, firstmessage, who, attach)`
+This adds a message from a new contact, creating a new chat for them. Works the same as `addMessage`, but remember to set the URL to the `chatimage` for this new character. Also remember that the `name` must be unique. The `attach` is optional (see above).
 
 **Example:** `<<addMessageContact "Sirius Ventures" "http://example.com/img/sirius.png" "Is this Henry? Your offer is waiting!" "char">>`
 
 ---
 
-`addMessageInChat(text, typedelay)`
-This is used to add a message in the current open chat (no matter which character). You set the `text` of the message as usual, and you can also set an optional `typedelay` in seconds, which shows an indicator that the character is typing. 
+`addMessageInChat(text, typedelay, attach)`
+This is used to add a message in the current open chat (no matter which character). You set the `text` of the message as usual, and you can also set an optional `typedelay` in seconds, which shows an indicator that the character is typing. It may be worth wrapping these in a `<<timed>>` widget, I seem to get better results from this. The `attach` is optional (see above).
 
 **Example:** `<<addMessageInChat "Are you coming out tonight?" 2s>>`
 
