@@ -1,7 +1,7 @@
 <img src="http://bonfiredog.co.uk/resources/twinetext/samplelogo.png" style="width:20%;">
 
 # `sugarchat`
-A Twine Story template (Sugarcube) for creating interactive stories in a text messaging app interface. Can be integrated into a larger Twine work, or used for standalone projects.  
+A Twine Story template (Sugarcube) for creating interactive stories in a text messaging app interface. Players can interact with characters through choice-based selection or free text entry. Characters can send text, emojis and media. Can be integrated into a larger Twine work, or used for standalone projects.  
 
 ## Screenshots
 <div style="display:flex;flex-direction:row;gap:1%;">
@@ -21,13 +21,15 @@ When creating new Passages based on the templates, make sure that you also repli
 
 You can play the sample as-is, and the Passage code is annotated so you can see how the samples work.
 
+I've started puzzling out some 'flows' for particular types of interaction, but it's fairly minimal. You'll be making good use of variables and the `<<timed>>` macro to key messages up in order to construct an actual narrative, but I have tried to make the template as flexible as possible. 
+
 Knowledge of the [Sugarcube](https://www.motoslave.net/sugarcube/2/docs/) story format for Twine 2 is vital.
 
 All CSS is included in the embedded stylesheet, and can be tweaked to your heart's content. This template is designed for phone screens, and may look a bit janky on desktop. 
 
 ## Full Tutorial
 ### StoryInit
-Set the name of your messaging app (`$appName`) and the (`$playerName`) here.
+Set the name of your messaging app (`$appName`) and the `$playerName` here.
 
 You should also create the initial `$messagelist`: a data structure that includes all the characters and their chat history that are *present at the start of the game*. The samples should be self-explanatory, but each character needs the following:
 
@@ -35,7 +37,7 @@ You should also create the initial `$messagelist`: a data structure that include
 - A unique `name`;
 - A URL linking to a profile picture (`chatimage`);
 - The `id` of the `latestmsg` (set this to the `id` of the latest message in the character's `messages` Array);
-- The `id` of the `lastread` message (you can set this to be lower than the `id`, a notification badge will appear in the message list when the player starts the game).
+- The `id` of the `lastread` message (you can set this to be lower than the `id`, and a notification badge will appear in the message list when the player starts the game).
 - A `messages` array, which contains a list of messages with the following variables:
 	- Again, an `id` (starting at 0);
  	- A `who` marker (whether it is from the `"char"` or the `"player"`);
@@ -46,12 +48,10 @@ You should also create the initial `$messagelist`: a data structure that include
 Use the template as-is: The  `<<menuScreen>><<menuScreen>>` widget, with only a single parameter pointing to the URL of your fictional app's logo.
 
 ### Chat Screen
-
 Again, the template provided shouldn't need editing, just include it as-is.
 
 ### Current Chat
-
-When the player selects a chat to read, the `<<chatscreen>>` widget populates the Passage with all the messages (from both the character and the player) included in the `messages` array for that character. 
+When the player selects a chat to read, the `<<chatscreen>>` widget populates this Passage with all the messages (from both the character and the player) included in the `messages` array for that character. 
 
 Other than this, all the functionality and interaction for the current chat is defined in the `Current Chat` passage. Any messages you add using the widgets below are added to the message list database for that character.
 
@@ -62,9 +62,9 @@ This template deliberately avoids defining story logic: this is up to you, and c
 ### Widget List
 
 `addMessage(name, who, text, attach)`
-This adds a new message to a chat, even if you aren't currently reading that chat. Use `name` to identify which chat, `who` to define whether it's a message from the `char` or the `player`, and the `text` to set the actual content of the message. You can use the `$chattingwith` variable if you want to add a message to the currently-selected character. The `attach` is optional (see above).
+This adds a new message to a chat that *you are not currently reading* (it doesn't work well for adding messages to the currently-open chat). Use `name` to identify which chat, `who` to define whether it's a message from the `char` or the `player`, and the `text` to set the actual content of the message. You can use the `$chattingwith` variable if you want to add a message to the currently-selected character. The `attach` is optional (see above).
 
-**Example:** `<<addMessage "John" "char" "Are you there?">>`
+**Example:** `<<addMessage "John" "char" "Are you there?" "<img src='http://example.com/img/meme.png'>">>`
 
 ---
 
