@@ -1,3 +1,5 @@
+<img src="http://bonfiredog.co.uk/resources/twinetext/samplelogo.png" style-"width:20%;">
+
 # `sugarchat`
 A Twine Story template (Sugarcube) for creating interactive stories in a text messaging app interface. Can be integrated into a larger Twine work, or used for standalone projects.  
 
