@@ -15,7 +15,9 @@ A Twine Story template (Sugarcube) for creating interactive stories in a text me
 </div>
 
 ## Using This Template
-Import the sample HTML file to your Twine 2 Story List, ensuring that you have the **Sugarcube** story format selected. Don't delete anything unless you know what you are doing, as all the Passages (in particular the special Passages `StoryInit`, `PassageHeader` and so on) are there for a reason.
+Import the sample HTML file to your Twine 2 Story List. In order to ensure that any story you create has a unique IFID, you should then copy the contents into a new Twine STory, rather than using the sample HTML itself. ([Read this to understand why this is important](https://babel.ifarchive.org/)).
+
+Ensure that you have the **Sugarcube** story format selected. Don't delete anything unless you know what you are doing, as all the Passages (in particular the special Passages `StoryInit`, `PassageHeader` and so on) are there for a reason.
 
 When creating new Passages based on the templates, make sure that you also replicate their tags, as these are important to the functionality. 
 
